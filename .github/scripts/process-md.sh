@@ -51,10 +51,20 @@ if [[ -f "$GITHUB_OUTPUT" ]]; then
   echo "CategoryName=$CAT_NAME" >> "$GITHUB_OUTPUT"
 fi
 
+echo "====================================="
 echo "ID: $AYA_ID"
 echo "URL: $URL"
 echo "Category ID: $CAT_ID"
 echo "Category Name: $CAT_NAME"
+echo "====================================="
 
+echo ":: Checking if URL already exists in staging area"
+# Check if we already have this URL in the staging area
+if bash "$(dirname "$(readlink -f "$0")")"/find-video-by-url.sh "$URL"; then
+  echo "URL already exists in staging area, skipping: $URL"
+  exit 0
+fi
+
+echo ":: URL not found in staging area, processing: $URL"
 # OK, just give the data to the next step
 bash "$(dirname "$(readlink -f "$0")")"/process-url.sh "$AYA_ID" "$URL" "$CAT_ID" "$CAT_NAME" "$UPLOAD"
