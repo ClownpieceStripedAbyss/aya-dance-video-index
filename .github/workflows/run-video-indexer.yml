@@ -13,7 +13,37 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Find available ID
+
+      - uses: jitterbit/get-changed-files@v1
+        id: get-changed
+        with:
+          format: json
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Printing changed files
         run: |
-          bash .github/scripts/find-available-id.sh
+          echo "All:"
+          echo "${{ steps.get-changed.outputs.all }}"
+          echo "Added:"
+          echo "${{ steps.get-changed.outputs.added }}"
+          echo "Removed:"
+          echo "${{ steps.get-changed.outputs.removed }}"
+          echo "Renamed:"
+          echo "${{ steps.get-changed.outputs.renamed }}"
+          echo "Modified:"
+          echo "${{ steps.get-changed.outputs.modified }}"
+          echo "Added+Modified:"
+          echo "${{ steps.get-changed.outputs.added_modified }}"
+      
+      - name: Process added files
+        id: extract
+        run: |
+          readarray -t added_files <<<"$(jq -r '.[]' <<<'${{ steps.files.outputs.removed }}')"
+          for added_file in ${added_files[@]}; do
+            if [[ "$added_file" == *.md ]]; then
+              echo "Processing markdown file: ${added_file}."
+              bash .github/scripts/process-md.sh "${added_file}"
+            fi
+          done
+
 
