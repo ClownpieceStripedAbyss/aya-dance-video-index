@@ -1,5 +1,7 @@
 name: test
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
   merge_group:
@@ -11,4 +13,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Find available ID
+        run: |
+          bash .github/scripts/find-available-id.sh
 
