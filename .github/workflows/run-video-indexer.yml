@@ -1,7 +1,5 @@
 name: test
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
   merge_group:
@@ -35,15 +33,37 @@ jobs:
           echo "Added+Modified:"
           echo "${{ steps.get-changed.outputs.added_modified }}"
       
-      - name: Process added files
-        id: extract
+      - name: Get available ID
+        id: get-id
         run: |
+          echo "Getting available ID."
+          ID=$(bash .github/scripts/find-available-id.sh)
+          if [[ -z "$ID" ]]; then
+            echo "No available ID found."
+            exit 1
+          fi
+          echo "Available ID: $ID"
+          echo "id=$ID" >> $GITHUB_OUTPUT
+
+      - name: Process added files
+        id: added
+        run: |
+          ID=${{ steps.get-id.outputs.id }}
+          echo "Let's start with ID: $ID."
+
           readarray -t added_files <<<"$(jq -r '.[]' <<<'${{ steps.files.outputs.removed }}')"
           for added_file in ${added_files[@]}; do
-            if [[ "$added_file" == *.md ]]; then
-              echo "Processing markdown file: ${added_file}."
-              bash .github/scripts/process-md.sh "${added_file}"
+            if [[ "$added_file" == videos/*.md ]]; then
+              echo "Processing video markdown file with ID $ID: ${added_file}."
+              bash .github/scripts/process-md.sh "$ID" "${added_file}"
+              ID=$((ID + 1))
             fi
           done
 
+          echo "New ID for next steps: $ID"
+          echo "id=$ID" >> $GITHUB_OUTPUT
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: video-indexer-${{ steps.get-id.outputs.id }}_${{ steps.added.outputs.id }}
+          path: out/
