@@ -14,8 +14,6 @@ if [[ -z "$AYA_ID" || -z "$YOUTUBE_URL" || -z "$AYA_CAT_ID" || -z "$AYA_CAT_NAME
   exit 1
 fi
 
-cd "$(dirname "$(readlink -f "$0")")"
-
 # Download indexer from GitHub release
 echo ":: Downloading indexer fat jar..."
 INDEXER_URL="https://github.com/ClownpieceStripedAbyss/aya-dance-indexer/releases/latest/download/aya-dance-indexer-fatjar.jar"
@@ -29,7 +27,7 @@ chmod +x yt-dlp
 
 if [[ "$AYA_ID"x == "-1"x ]]; then
   echo ":: Computing available video ID from staging server..."
-  AYA_ID=$(bash ./find-available-id.sh)
+  AYA_ID=$(bash "$(dirname "$(readlink -f "$0")")"/find-available-id.sh)
   if [[ -z "$AYA_ID" ]]; then
     echo "Failed to find available ID"
     exit 1
@@ -41,11 +39,11 @@ fi
 
 echo ":: Fetching video with ID $AYA_ID..."
 rm -rf "out/staging_$AYA_ID"
-bash ./fetch-video.sh "$YOUTUBE_URL" "$AYA_ID" "$AYA_CAT_ID" "$AYA_CAT_NAME" "./indexer.jar" "./yt-dlp"
+bash "$(dirname "$(readlink -f "$0")")"/fetch-video.sh "$YOUTUBE_URL" "$AYA_ID" "$AYA_CAT_ID" "$AYA_CAT_NAME" "./indexer.jar" "./yt-dlp"
 
 if [[ "$UPLOAD"x != "true"x ]]; then
   echo "Upload disabled, skipping..."
   exit 0
 fi
 echo ":: Uploading to staging area..."
-bash ./upload-video.sh "out/staging_$AYA_ID" "$AYA_ID"
+bash "$(dirname "$(readlink -f "$0")")"/upload-video.sh "out/staging_$AYA_ID" "$AYA_ID"

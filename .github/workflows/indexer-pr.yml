@@ -1,5 +1,7 @@
-name: test
+name: indexer-preview
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
   merge_group:
@@ -12,6 +14,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Install jq
+        uses: dcarbone/install-jq-action@v2
+        
       - uses: jitterbit/get-changed-files@v1
         id: get-changed
         with:
@@ -45,17 +55,28 @@ jobs:
           echo "Available ID: $ID"
           echo "id=$ID" >> $GITHUB_OUTPUT
 
+      - name: Check if we should upload to staging server
+        id: check-upload
+        run: |
+          upload="${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}"
+          echo "Should upload to staging server: $upload"
+          echo "upload=$upload" >> $GITHUB_OUTPUT
+
       - name: Process added files
         id: added
         run: |
           ID=${{ steps.get-id.outputs.id }}
+          UPLOAD=${{ steps.check-upload.outputs.upload }}
           echo "Let's start with ID: $ID."
+          echo "And upload: $UPLOAD."
 
-          readarray -t added_files <<<"$(jq -r '.[]' <<<'${{ steps.files.outputs.removed }}')"
+          readarray -t added_files <<<"$(jq -r '.[]' <<<'${{ steps.get-changed.outputs.added }}')"
           for added_file in ${added_files[@]}; do
+            echo "Checking added file: $added_file"
+
             if [[ "$added_file" == videos/*.md ]]; then
               echo "Processing video markdown file with ID $ID: ${added_file}."
-              bash .github/scripts/process-md.sh "$ID" "${added_file}"
+              bash .github/scripts/process-md.sh "$ID" "${added_file}" "$UPLOAD"
               ID=$((ID + 1))
             fi
           done
