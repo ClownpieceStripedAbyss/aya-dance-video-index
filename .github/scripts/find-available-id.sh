@@ -19,7 +19,8 @@ last_id=$(
     "$ssh_user@$ssh_ip" "ls -1 $ssh_path" | \
   grep -oP '^[0-9]+$' | \
   sort -u -n -r | \
-  head -n1
+  sed '1!d'
+  # ^ no head -n1, as it casues broken pipe
 )
 
 echo $((last_id + 1))
