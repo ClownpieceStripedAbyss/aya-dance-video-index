@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-MD="$1"
+AYA_ID="$1"
+MD="$2"
+UPLOAD="${3:-false}"
 
-if [[ -z "$MD" ]]; then
-  echo "Usage: $0 <markdown-file>"
+if [[ -z "$MD" || -z "$AYA_ID" ]]; then
+  echo "Usage: $0 <id> <markdown-file> [upload]"
   exit 1
 fi
 
@@ -43,9 +45,16 @@ if [[ -z "$CAT_NAME" ]]; then
 fi
 
 # Set the github actions output, for debugging
-echo "URL=$URL" >> "$GITHUB_OUTPUT"
-echo "CategoryID=$CAT_ID" >> "$GITHUB_OUTPUT"
-echo "CategoryName=$CAT_NAME" >> "$GITHUB_OUTPUT"
+if [[ -f "$GITHUB_OUTPUT" ]]; then
+  echo "URL=$URL" >> "$GITHUB_OUTPUT"
+  echo "CategoryID=$CAT_ID" >> "$GITHUB_OUTPUT"
+  echo "CategoryName=$CAT_NAME" >> "$GITHUB_OUTPUT"
+fi
+
+echo "ID: $AYA_ID"
+echo "URL: $URL"
+echo "Category ID: $CAT_ID"
+echo "Category Name: $CAT_NAME"
 
 # OK, just give the data to the next step
-bash "$(dirname "$(readlink -f "$0")")"/process-url.sh "$URL" "$CAT_ID" "$CAT_NAME"
+bash "$(dirname "$(readlink -f "$0")")"/process-url.sh "$AYA_ID" "$URL" "$CAT_ID" "$CAT_NAME" "$UPLOAD"

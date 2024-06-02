@@ -28,7 +28,7 @@ if [[ -z "$YT_DLP" ]]; then
   fi
 fi
 
-OUT_DIR="staging_$AYA_ID"
+OUT_DIR="out/staging_$AYA_ID"
 mkdir -p "$OUT_DIR"
 
 $YT_DLP --no-check-certificate \

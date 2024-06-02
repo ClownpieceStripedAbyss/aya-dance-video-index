@@ -2,12 +2,15 @@
 
 set -e -o pipefail
 
-YOUTUBE_URL="$1"
-AYA_CAT_ID="$2"
-AYA_CAT_NAME="$3"
+AYA_ID="$1"
+YOUTUBE_URL="$2"
+AYA_CAT_ID="$3"
+AYA_CAT_NAME="$4"
 
-if [[ -z "$YOUTUBE_URL" || -z "$AYA_CAT_ID" || -z "$AYA_CAT_NAME" ]]; then
-  echo "Usage: $0 <youtube-url> <category-id> <category-name>"
+UPLOAD="${4:-false}"
+
+if [[ -z "$AYA_ID" || -z "$YOUTUBE_URL" || -z "$AYA_CAT_ID" || -z "$AYA_CAT_NAME" ]]; then
+  echo "Usage: $0 <id> <youtube-url> <category-id> <category-name> [upload]"
   exit 1
 fi
 
@@ -24,16 +27,25 @@ YT_DLP_URL="https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_lin
 wget -O yt-dlp "$YT_DLP_URL"
 chmod +x yt-dlp
 
-echo ":: Computing available video ID..."
-AYA_ID=$(bash ./find-available-id.sh)
-echo "Available ID: $AYA_ID"
+if [[ "$AYA_ID"x == "-1"x ]]; then
+  echo ":: Computing available video ID from staging server..."
+  AYA_ID=$(bash ./find-available-id.sh)
+  if [[ -z "$AYA_ID" ]]; then
+    echo "Failed to find available ID"
+    exit 1
+  fi
+  echo "Available ID: $AYA_ID"
+else
+  echo ":: Using provided video ID: $AYA_ID"
+fi
 
 echo ":: Fetching video with ID $AYA_ID..."
-rm -rf "staging_$AYA_ID"
+rm -rf "out/staging_$AYA_ID"
 bash ./fetch-video.sh "$YOUTUBE_URL" "$AYA_ID" "$AYA_CAT_ID" "$AYA_CAT_NAME" "./indexer.jar" "./yt-dlp"
 
+if [[ "$UPLOAD"x != "true"x ]]; then
+  echo "Upload disabled, skipping..."
+  exit 0
+fi
 echo ":: Uploading to staging area..."
-bash ./upload-video.sh "staging_$AYA_ID" "$AYA_ID"
-
-echo ":: Cleaning up..."
-rm -rf "staging_$AYA_ID"
+bash ./upload-video.sh "out/staging_$AYA_ID" "$AYA_ID"
