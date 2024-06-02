@@ -71,7 +71,7 @@ jobs:
           echo "And upload: $UPLOAD."
 
           readarray -t added_files <<<"$(jq -r '.[]' <<<'${{ steps.get-changed.outputs.added }}')"
-          for added_file in ${added_files[@]}; do
+          for added_file in "${added_files[@]}"; do
             echo "Checking added file: $added_file"
 
             if [[ "$added_file" == videos/*.md ]]; then
