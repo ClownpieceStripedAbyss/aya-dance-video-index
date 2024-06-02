@@ -7,7 +7,7 @@ YOUTUBE_URL="$2"
 AYA_CAT_ID="$3"
 AYA_CAT_NAME="$4"
 
-UPLOAD="${4:-false}"
+UPLOAD="${5:-false}"
 
 if [[ -z "$AYA_ID" || -z "$YOUTUBE_URL" || -z "$AYA_CAT_ID" || -z "$AYA_CAT_NAME" ]]; then
   echo "Usage: $0 <id> <youtube-url> <category-id> <category-name> [upload]"
