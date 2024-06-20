@@ -47,11 +47,9 @@ To contribute a dance video, you need to:
 5. Commit your changes and create a pull request.
 6. Wait for the maintainers to review your pull request. If everything is correct, 
    your pull request will be merged and your video will be added to the index.
-7. Wait for the index to be updated. The index is updated every 3:00 AM HKT every day.
+7. Wait for the index to be updated. The index is updated every 5:00 AM HKT every day.
    After the update, you can find the added video in the [AyaDance World](https://vrchat.com/home/world/wrld_9ad22e66-8f3a-443e-81f9-87c350ed5113).
-   We also host a web version of the index at [aya.kiva.moe](https://aya.kiva.moe), where you can find all the videos indexed.
-   The web version is updated every 4:00 AM HKT every day, so you may need to wait a little longer to see your video on the web.
-   We forced a 1-hour delay to ensure the new video files are synced to the production server.
+   or our website [aya.kiva.moe](https://aya.kiva.moe). The website version of the index is updated at 5:00 AM HKT every day, too.
 
 
 
@@ -113,11 +111,9 @@ aya-dance-video-index
    
 5. 提交您的更改并创建一个 pull request。
 6. 等待维护者审核您的 pull request。如果一切正确，您的 pull request 将被合并，您的视频将被添加到索引中。
-7. 等待索引更新。索引每天下午 3:00 HKT 更新。
-   更新后，您可以在 [AyaDance World](https://vrchat.com/home/world/wrld_9ad22e66-8f3a-443e-81f9-87c350ed5113) 中找到添加的视频。
-   我们还在 [aya.kiva.moe](https://aya.kiva.moe) 上托管了索引的网页版本，您可以在该网站上找到所有索引的视频。
-   网页版本每天上午 4:00 HKT 更新，因此您可能多等待一小时才能在网页上看到您的视频。
-   设置 1 小时的延迟是为了确保新视频文件同步到生产服务器。
+7. 等待索引更新。索引每天的上午 5:00 HKT 更新一次。
+   更新后，您可以在 [AyaDance 世界](https://vrchat.com/home/world/wrld_9ad22e66-8f3a-443e-81f9-87c350ed5113)
+   或我们的网站 [aya.kiva.moe](https://aya.kiva.moe) 中找到添加的视频。网站版本的索引也在每天上午 5:00 HKT 同步更新。
 
 
 ## 致谢
