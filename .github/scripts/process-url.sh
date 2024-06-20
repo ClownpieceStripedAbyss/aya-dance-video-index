@@ -6,11 +6,12 @@ AYA_ID="$1"
 YOUTUBE_URL="$2"
 AYA_CAT_ID="$3"
 AYA_CAT_NAME="$4"
+FLIP="$5"
 
-UPLOAD="${5:-false}"
+UPLOAD="${6:-false}"
 
-if [[ -z "$AYA_ID" || -z "$YOUTUBE_URL" || -z "$AYA_CAT_ID" || -z "$AYA_CAT_NAME" ]]; then
-  echo "Usage: $0 <id> <youtube-url> <category-id> <category-name> [upload]"
+if [[ -z "$AYA_ID" || -z "$YOUTUBE_URL" || -z "$AYA_CAT_ID" || -z "$AYA_CAT_NAME" || -z "$FLIP" ]]; then
+  echo "Usage: $0 <id> <youtube-url> <category-id> <category-name> <flip> [upload]"
   exit 1
 fi
 
@@ -39,7 +40,7 @@ fi
 
 echo ":: Fetching video with ID $AYA_ID..."
 rm -rf "out/staging_$AYA_ID"
-bash "$(dirname "$(readlink -f "$0")")"/fetch-video.sh "$YOUTUBE_URL" "$AYA_ID" "$AYA_CAT_ID" "$AYA_CAT_NAME" "./indexer.jar" "./yt-dlp"
+bash "$(dirname "$(readlink -f "$0")")"/fetch-video.sh "$YOUTUBE_URL" "$AYA_ID" "$AYA_CAT_ID" "$AYA_CAT_NAME" "$FLIP" "./indexer.jar" "./yt-dlp"
 
 if [[ "$UPLOAD"x != "true"x ]]; then
   echo "Upload disabled, skipping..."

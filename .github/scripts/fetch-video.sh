@@ -6,12 +6,13 @@ YOUTUBE_URL="$1"
 AYA_ID="$2"
 AYA_CAT_ID="$3"
 AYA_CAT_NAME="$4"
+FLIP="$5"
 
-INDEXER_JAR="$5"
-YT_DLP="$6"
+INDEXER_JAR="$6"
+YT_DLP="$7"
 
-if [[ -z "$YOUTUBE_URL" || -z "$AYA_ID" || -z "$AYA_CAT_ID" || -z "$AYA_CAT_NAME" ]]; then
-  echo "Usage: $0 <youtube-url> <song-id> <category-id> <category-name> [indexer-jar] [yt-dlp]"
+if [[ -z "$YOUTUBE_URL" || -z "$AYA_ID" || -z "$AYA_CAT_ID" || -z "$AYA_CAT_NAME" || -z "$FLIP" ]]; then
+  echo "Usage: $0 <youtube-url> <song-id> <category-id> <category-name> <flip> [indexer-jar] [yt-dlp]"
   exit 1
 fi
 
@@ -38,6 +39,6 @@ $YT_DLP --no-check-certificate \
   -o "$OUT_DIR/video.mp4" \
   "$YOUTUBE_URL"
 MD5SUM=$(md5sum "$OUT_DIR/video.mp4" | cut -d' ' -f1)
-java -jar "$INDEXER_JAR" "$YOUTUBE_URL" "$AYA_ID" "$AYA_CAT_ID" "$AYA_CAT_NAME" \
+java -jar "$INDEXER_JAR" "$YOUTUBE_URL" "$AYA_ID" "$AYA_CAT_ID" "$AYA_CAT_NAME" "$FLIP" \
   | sed "s/CHECKSUM-PLACEHOLDER/$MD5SUM/g" \
   | tee "$OUT_DIR/metadata.json"

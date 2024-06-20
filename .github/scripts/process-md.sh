@@ -28,6 +28,7 @@ done <<< "$frontmatter"
 URL="${fields[URL]}"
 CAT_ID="${fields[CategoryID]}"
 CAT_NAME="${fields[CategoryName]}"
+FLIP="${fields[Flip]}"
 
 if [[ -z "$URL" ]]; then
   echo "URL not found in frontmatter"
@@ -44,11 +45,16 @@ if [[ -z "$CAT_NAME" ]]; then
   exit 1
 fi
 
+if [[ "$FLIP"x != "true"x ]]; then
+  FLIP="false"
+fi
+
 # Set the github actions output, for debugging
 if [[ -f "$GITHUB_OUTPUT" ]]; then
   echo "URL=$URL" >> "$GITHUB_OUTPUT"
   echo "CategoryID=$CAT_ID" >> "$GITHUB_OUTPUT"
   echo "CategoryName=$CAT_NAME" >> "$GITHUB_OUTPUT"
+  echo "Flip=$FLIP" >> "$GITHUB_OUTPUT"
 fi
 
 echo "====================================="
@@ -56,6 +62,7 @@ echo "ID: $AYA_ID"
 echo "URL: $URL"
 echo "Category ID: $CAT_ID"
 echo "Category Name: $CAT_NAME"
+echo "Flip: $FLIP"
 echo "====================================="
 
 echo ":: Checking if URL already exists in staging area"
@@ -67,4 +74,4 @@ fi
 
 echo ":: URL not found in staging area, processing: $URL"
 # OK, just give the data to the next step
-bash "$(dirname "$(readlink -f "$0")")"/process-url.sh "$AYA_ID" "$URL" "$CAT_ID" "$CAT_NAME" "$UPLOAD"
+bash "$(dirname "$(readlink -f "$0")")"/process-url.sh "$AYA_ID" "$URL" "$CAT_ID" "$CAT_NAME" "$FLIP" "$UPLOAD"
