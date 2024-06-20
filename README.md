@@ -22,8 +22,9 @@ To contribute a dance video, you need to:
 3. Fill in the metadata of the video **in the frontmatter of the markdown file**. The metadata should include:
 
    - `URL`: the URL of the video on YouTube.
-   - `CategoryID`: the ID of the category the video belongs to. You can find the category ID in the `categories.json` file.
-   - `CategoryName`: the name of the category the video belongs to. You can find the category name in the `categories.json` file.
+   - `CategoryName`: the name of the category the video belongs to. You can find the category name in the [categories.json](categories.json) file.
+   - `Flip`: whether the video should be flipped horizontally. **For videos that are already mirrored, set this to `false`.**
+   - `CategoryID` (optional): the ID of the category the video belongs to. You can find the category ID in the [categories.json](categories.json) file.
    
    If you are not sure about the format, 
    you can refer to the existing markdown files in the `videos` directory for examples,
@@ -34,13 +35,13 @@ To contribute a dance video, you need to:
    
    A minimal but complete template is as follows:
    ```markdown
-    ---
-    URL: https://www.youtube.com/watch?v=jGHFpv_oDS0
-    CategoryID: 13
-    CategoryName: Others (J-POP)
-    ---
-    
-    【Full Dance】振付師が III / 宝鐘マリン&Kobo Kanaeru 踊ってみた【わた×まりやん】
+   ---
+   URL: https://www.youtube.com/watch?v=X9TMa-X38cg
+   CategoryName: Others
+   Flip: true
+   ---
+   
+   APOKI (아뽀키) 'Space' Dance Practice 연습실 영상
    ```
    
 5. Commit your changes and create a pull request.
@@ -89,8 +90,9 @@ aya-dance-video-index
 3. 在 markdown 文件的 **前置数据区** 中填写视频的元数据。元数据应包括：
 
     - `URL`：视频在 YouTube 上的链接。
-    - `CategoryID`：视频所属类别的 ID。您可以在 `categories.json` 文件中找到类别 ID。
-    - `CategoryName`：视频所属类别的名称。您可以在 `categories.json` 文件中找到类别名称。
+    - `CategoryName`：视频所属类别的名称。您可以在 [categories.json](categories.json) 文件中找到类别名称。
+    - `Flip`：视频是否应水平翻转。**对于已经镜像的视频，请将此设置为 `false`。**
+    - `CategoryID`（可选）：视频所属类别的 ID。您可以在 [categories.json](categories.json) 文件中找到类别 ID。
    
    如果您不确定格式，可以参考 `videos` 目录中的现有 markdown 文件示例，
    或查看现有的 PR 示例 [如这个：Add 呐喊 Screaming | VRChat Fitness Dance | Song^_^](https://github.com/ClownpieceStripedAbyss/aya-dance-video-index/pull/3)，
@@ -100,13 +102,13 @@ aya-dance-video-index
 
    完整的最简易模板如下：
    ```markdown
-    ---
-    URL: https://www.youtube.com/watch?v=jGHFpv_oDS0
-    CategoryID: 13
-    CategoryName: Others (J-POP)
-    ---
-    
-   【Full Dance】振付師が III / 宝鐘マリン&Kobo Kanaeru 踊ってみた【わた×まりやん】
+   ---
+   URL: https://www.youtube.com/watch?v=X9TMa-X38cg
+   CategoryName: Others
+   Flip: true
+   ---
+   
+   APOKI (아뽀키) 'Space' Dance Practice 연습실 영상
    ```
    
 5. 提交您的更改并创建一个 pull request。

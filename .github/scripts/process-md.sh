@@ -35,14 +35,33 @@ if [[ -z "$URL" ]]; then
   exit 1
 fi
 
-if [[ -z "$CAT_ID" ]]; then
-  echo "Category ID not found in frontmatter"
-  exit 1
-fi
-
 if [[ -z "$CAT_NAME" ]]; then
   echo "Category Name not found in frontmatter"
   exit 1
+fi
+
+if [[ -z "$CAT_ID" ]]; then
+  # read it from categories.json with jq
+  CAT_ID=$(jq -r --arg name "$CAT_NAME" '.[] | select(.name == $name) | .id' "$(dirname "$(readlink -f "$0")")"/../../categories.json)
+  if [[ -z "$CAT_ID" ]]; then
+    echo "No mapping found for Category Name: $CAT_NAME in categories.json, please add it or provide Category ID in frontmatter"
+    exit 1
+  fi
+else
+  # Check if the category ID exists
+  # remember the id is an integer, so we need to compare it as an integer
+  if ! jq -e --arg id "$CAT_ID" '.[] | select(.id == ($id | tonumber))' "$(dirname "$(readlink -f "$0")")"/../../categories.json > /dev/null; then
+    echo "Category ID: $CAT_ID not found in categories.json"
+    exit 1
+  fi
+  # Check if the category name matches the ID
+  CAT_NAME_IN_JSON="$(jq -r --arg id "$CAT_ID" '.[] | select(.id == ($id | tonumber)) | .name' "$(dirname "$(readlink -f "$0")")"/../../categories.json)"
+  if [[ "$CAT_NAME" != "$CAT_NAME_IN_JSON" ]]; then
+    echo "Category Name does not match Category ID"
+    echo "In categories.json, Category ID: $CAT_ID is mapped to Category Name \"$CAT_NAME_IN_JSON\""
+    echo "But the frontmatter declares that Category Name is \"$CAT_NAME\", which is not true"
+    exit 1
+  fi
 fi
 
 if [[ "$FLIP"x != "true"x ]]; then
