@@ -54,5 +54,9 @@
   {
     "id": 13,
     "name": "Others (J-POP)"
+  },
+  {
+    "id": 100,
+    "name": "Dance Tutorial"
   }
 ]
