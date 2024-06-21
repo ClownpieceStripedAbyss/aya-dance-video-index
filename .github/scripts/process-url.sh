@@ -39,12 +39,34 @@ else
 fi
 
 echo ":: Fetching video with ID $AYA_ID..."
-rm -rf "out/staging_$AYA_ID"
-bash "$(dirname "$(readlink -f "$0")")"/fetch-video.sh "$YOUTUBE_URL" "$AYA_ID" "$AYA_CAT_ID" "$AYA_CAT_NAME" "$FLIP" "./indexer.jar" "./yt-dlp"
+OUT_DIR="out/staging_$AYA_ID"
+rm -rf "$OUT_DIR"
+mkdir -p "$OUT_DIR"
+
+YT_DLP="./yt-dlp"
+INDEXER_JAR="./indexer.jar"
+
+$YT_DLP --no-check-certificate \
+  --no-cache-dir \
+  --rm-cache-dir \
+  -f "(mp4/best)[height<=?2160][height>=?256][width>=?256]" \
+  -o "$OUT_DIR/video.mp4" \
+  "$YOUTUBE_URL"
+
+MD5SUM=$(md5sum "$OUT_DIR/video.mp4" | cut -d' ' -f1)
+
+java -jar "$INDEXER_JAR" \
+    --url "$YOUTUBE_URL" \
+    --id "$AYA_ID" \
+    --cat-id "$AYA_CAT_ID" \
+    --cat-name "$AYA_CAT_NAME" \
+    --flip "$FLIP" \
+  | sed "s/CHECKSUM-PLACEHOLDER/$MD5SUM/g" \
+  | tee "$OUT_DIR/metadata.json"
 
 if [[ "$UPLOAD"x != "true"x ]]; then
   echo "Upload disabled, skipping..."
   exit 0
 fi
 echo ":: Uploading to staging area..."
-bash "$(dirname "$(readlink -f "$0")")"/upload-video.sh "out/staging_$AYA_ID" "$AYA_ID"
+bash "$(dirname "$(readlink -f "$0")")"/upload-video.sh "$OUT_DIR" "$AYA_ID"
