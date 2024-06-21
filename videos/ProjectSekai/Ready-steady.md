@@ -1,7 +1,7 @@
 ---
 URL: https://www.youtube.com/watch?v=kTuQk9CW6Kw
 CategoryName: Others (J-POP)
-Flip: false
+Flip: true
 TitlePrefix: "[vivid bad squad]"
 ---
 
