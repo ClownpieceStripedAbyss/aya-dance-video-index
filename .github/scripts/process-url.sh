@@ -52,7 +52,8 @@ INDEXER_JAR="./indexer.jar"
 $YT_DLP --no-check-certificate \
   --no-cache-dir \
   --rm-cache-dir \
-  -f "(mp4/best)[height<=?2160][height>=?256][width>=?256]" \
+  -f "((bestvideo[ext=mp4][vbr>=1200][vbr<=2000][height<=720]/best[ext=mp4][height<=720])[height<=?2160][height>=?256][width>=?256])+bestaudio[ext=m4a][abr>=128][abr<=320]" \
+  --merge-output-format mp4 \
   -o "$OUT_DIR/video.mp4" \
   "$YOUTUBE_URL"
 
