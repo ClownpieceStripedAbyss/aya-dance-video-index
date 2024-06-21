@@ -75,6 +75,32 @@ TITLE_PREFIX="${fields[TitlePrefix]}"
 TITLE_SUFFIX="${fields[TitleSuffix]}"
 TITLE_REMOVE="${fields[TitleRemove]}"
 
+# if they are wrapped in quotes, remove the first and last character
+function unwrap-title-in-quotes() {
+  local title="$1"
+  # remove the wrapping quotes
+  if [[ "$title" =~ ^\".*\"$ ]]; then
+    # Bash magic
+    title="${title:1:${#title}-2}"
+    # remember to unescape the quotes, since they are not wrapped in quotes anymore
+    title="${title//\\\"/\"}"
+  fi
+  echo "$title"
+}
+
+if [[ -n "$TITLE_OVERRIDE" ]]; then
+  TITLE_OVERRIDE=$(unwrap-title-in-quotes "$TITLE_OVERRIDE")
+fi
+if [[ -n "$TITLE_PREFIX" ]]; then
+  TITLE_PREFIX=$(unwrap-title-in-quotes "$TITLE_PREFIX")
+fi
+if [[ -n "$TITLE_SUFFIX" ]]; then
+  TITLE_SUFFIX=$(unwrap-title-in-quotes "$TITLE_SUFFIX")
+fi
+if [[ -n "$TITLE_REMOVE" ]]; then
+  TITLE_REMOVE=$(unwrap-title-in-quotes "$TITLE_REMOVE")
+fi
+
 # Set the github actions output, for debugging
 if [[ -f "$GITHUB_OUTPUT" ]]; then
   echo "URL=$URL" >> "$GITHUB_OUTPUT"
