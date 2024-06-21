@@ -25,6 +25,7 @@ while IFS= read -r line; do
     fields[$key]="$value"
 done <<< "$frontmatter"
 
+## Essential fields
 URL="${fields[URL]}"
 CAT_ID="${fields[CategoryID]}"
 CAT_NAME="${fields[CategoryName]}"
@@ -68,12 +69,22 @@ if [[ "$FLIP"x != "true"x ]]; then
   FLIP="false"
 fi
 
+## Optional fields
+TITLE_OVERRIDE="${fields[TitleOverride]}"
+TITLE_PREFIX="${fields[TitlePrefix]}"
+TITLE_SUFFIX="${fields[TitleSuffix]}"
+TITLE_REMOVE="${fields[TitleRemove]}"
+
 # Set the github actions output, for debugging
 if [[ -f "$GITHUB_OUTPUT" ]]; then
   echo "URL=$URL" >> "$GITHUB_OUTPUT"
   echo "CategoryID=$CAT_ID" >> "$GITHUB_OUTPUT"
   echo "CategoryName=$CAT_NAME" >> "$GITHUB_OUTPUT"
   echo "Flip=$FLIP" >> "$GITHUB_OUTPUT"
+  echo "TitleOverride=$TITLE_OVERRIDE" >> "$GITHUB_OUTPUT"
+  echo "TitlePrefix=$TITLE_PREFIX" >> "$GITHUB_OUTPUT"
+  echo "TitleSuffix=$TITLE_SUFFIX" >> "$GITHUB_OUTPUT"
+  echo "TitleRemove=$TITLE_REMOVE" >> "$GITHUB_OUTPUT"
 fi
 
 echo "====================================="
@@ -82,6 +93,11 @@ echo "URL: $URL"
 echo "Category ID: $CAT_ID"
 echo "Category Name: $CAT_NAME"
 echo "Flip: $FLIP"
+echo "== Optional Fields =="
+echo "Title Override: $TITLE_OVERRIDE"
+echo "Title Prefix: $TITLE_PREFIX"
+echo "Title Suffix: $TITLE_SUFFIX"
+echo "Title Remove: $TITLE_REMOVE"
 echo "====================================="
 
 echo ":: Checking if URL already exists in staging area"
@@ -92,5 +108,26 @@ if bash "$(dirname "$(readlink -f "$0")")"/find-video-by-url.sh "$URL"; then
 fi
 
 echo ":: URL not found in staging area, processing: $URL"
+
+# construct arguments for the next step from optional fields
+OPT_ARGS=()
+if [[ -n "$TITLE_OVERRIDE" ]]; then
+  OPT_ARGS+=("--title-override" "$TITLE_OVERRIDE")
+fi
+if [[ -n "$TITLE_PREFIX" ]]; then
+  OPT_ARGS+=("--title-prefix" "$TITLE_PREFIX")
+fi
+if [[ -n "$TITLE_SUFFIX" ]]; then
+  OPT_ARGS+=("--title-suffix" "$TITLE_SUFFIX")
+fi
+if [[ -n "$TITLE_REMOVE" ]]; then
+  OPT_ARGS+=("--title-remove" "$TITLE_REMOVE")
+fi
+
+echo "Will pass the following optional arguments to the next step:"
+echo "${OPT_ARGS[@]}"
+
 # OK, just give the data to the next step
-bash "$(dirname "$(readlink -f "$0")")"/process-url.sh "$AYA_ID" "$URL" "$CAT_ID" "$CAT_NAME" "$FLIP" "$UPLOAD"
+bash "$(dirname "$(readlink -f "$0")")"/process-url.sh \
+  "$AYA_ID" "$URL" "$CAT_ID" "$CAT_NAME" "$FLIP" "$UPLOAD" \
+  "${OPT_ARGS[@]}"

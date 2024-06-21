@@ -10,6 +10,9 @@ FLIP="$5"
 
 UPLOAD="${6:-false}"
 
+# shift all essential arguments, so we can use $@ for optional arguments followed
+shift 6
+
 if [[ -z "$AYA_ID" || -z "$YOUTUBE_URL" || -z "$AYA_CAT_ID" || -z "$AYA_CAT_NAME" || -z "$FLIP" ]]; then
   echo "Usage: $0 <id> <youtube-url> <category-id> <category-name> <flip> [upload]"
   exit 1
@@ -61,6 +64,7 @@ java -jar "$INDEXER_JAR" \
     --cat-id "$AYA_CAT_ID" \
     --cat-name "$AYA_CAT_NAME" \
     --flip "$FLIP" \
+    "$@" \
   | sed "s/CHECKSUM-PLACEHOLDER/$MD5SUM/g" \
   | tee "$OUT_DIR/metadata.json"
 
